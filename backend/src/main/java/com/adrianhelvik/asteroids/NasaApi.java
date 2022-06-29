@@ -82,6 +82,6 @@ public class NasaApi {
 
   String performRequest() throws Exception {
     validateParams();
-    return RequestCache.get(baseUrl + "?from=" + param(from) + "&to=" + param(to) + "&api_key=" + param(apiKey));
+    return RequestCache.get(baseUrl + "?start_date=" + param(from) + "&end_date=" + param(to) + "&api_key=" + param(apiKey));
   }
 }
