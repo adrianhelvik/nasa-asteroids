@@ -63,41 +63,6 @@ public class DemoApplication {
   }
 }
 
-/* REAL REQUEST
-class RequestCache {
-  private static String get(URL url) throws Exception {
-    System.out.println("Requesting data from " + url.toString());
-
-    var connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
-
-    int status = connection.getResponseCode();
-
-    if (status != 200) {
-      throw new Exception("Request to NASA API failed with status code " + Integer.toString(status) + "!");
-    }
-
-    BufferedReader in = new BufferedReader(
-        new InputStreamReader(connection.getInputStream()));
-
-    String inputLine;
-    StringBuffer content = new StringBuffer();
-    while ((inputLine = in.readLine()) != null) {
-      content.append(inputLine);
-    }
-
-    in.close();
-    connection.disconnect();
-
-    return content.toString();
-  }
-  
-  public static String get(String url) throws Exception {
-    return get(new URL(url));
-  }
-}
-*/
-
 class RequestCache {
   private static RedisCommands<String, String> syncCommands;
   private static int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
