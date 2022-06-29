@@ -1,8 +1,8 @@
-package com.example.demo.models;
+package com.adrianhelvik.asteroids.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.example.demo.*;
+import com.adrianhelvik.asteroids.*;
 
 public class MissDistance {
   public final String astronomical;

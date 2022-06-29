@@ -1,8 +1,8 @@
-package com.example.demo.models;
+package com.adrianhelvik.asteroids.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.example.demo.models.*;
+import com.adrianhelvik.asteroids.models.*;
 
 @JsonIgnoreProperties({ "close_approach_date_full", "epoch_date_close_approach" })
 public class CloseApproachData {

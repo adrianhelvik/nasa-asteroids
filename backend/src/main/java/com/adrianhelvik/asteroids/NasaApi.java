@@ -1,11 +1,11 @@
-package com.example.demo;
+package com.adrianhelvik.asteroids;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.models.*;
-import com.example.demo.*;
+import com.adrianhelvik.asteroids.models.*;
+import com.adrianhelvik.asteroids.*;
 import java.net.*;
 
 public class NasaApi {
