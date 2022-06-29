@@ -21,6 +21,21 @@ import java.net.*;
 import java.io.*;
 
 public class RequestCache {
+  public static String get(String url) throws Exception {
+    var cached = syncCommands.get(url);
+
+    if (cached != null) {
+      System.out.println("Returned cached response");
+      return cached;
+    }
+
+    var response = get(new URL(url));
+
+    syncCommands.setex(url, cacheSeconds, response);
+
+    return response;
+  }
+
   private static RedisCommands<String, String> syncCommands;
   private static int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
 
@@ -55,20 +70,5 @@ public class RequestCache {
     connection.disconnect();
 
     return content.toString();
-  }
-  
-  public static String get(String url) throws Exception {
-    var cached = syncCommands.get(url);
-
-    if (cached != null) {
-      System.out.println("Returned cached response");
-      return cached;
-    }
-
-    var response = get(new URL(url));
-
-    syncCommands.setex(url, cacheSeconds, response);
-
-    return response;
   }
 }

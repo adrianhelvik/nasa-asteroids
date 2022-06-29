@@ -10,14 +10,23 @@ import java.util.*;
 @JsonIgnoreProperties({ "links" })
 public class NasaApiResponse {
   public final int element_count;
-  public final Map<String, List<Asteroid>> near_earth_objects;
+  public final List<Asteroid> asteroids;
 
   private NasaApiResponse(
       @JsonProperty("element_count") int element_count,
-      @JsonProperty("near_earth_objects") Map<String, List<Asteroid>> near_earth_objects
+      @JsonProperty("near_earth_objects") SortedMap<String, List<Asteroid>> near_earth_objects
   ) {
     this.element_count = element_count;
-    this.near_earth_objects = near_earth_objects;
+
+    var asteroids = new ArrayList<Asteroid>();
+
+    for (String date : near_earth_objects.keySet()) {
+      for (Asteroid asteroid : near_earth_objects.get(date)) {
+        asteroids.add(asteroid.withDate(date));
+      }
+    }
+
+    this.asteroids = asteroids;
   }
 
   public static NasaApiResponse fromJson(String json) throws Exception {
