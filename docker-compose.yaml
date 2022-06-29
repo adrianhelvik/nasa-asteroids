@@ -1,0 +1,44 @@
+version: '3'
+
+# The reason why the build context is in the root folder,
+# is so that we'll be able to share code between multiple
+# services if that should become a requirement, and so that
+# configuration files can be moved away from the source.
+#
+# It's a matter of preference and the project requirements.
+# I find it useful as I want to have separate Dockerfiles
+# for development and prod. In a real environment I would
+# have preferred to use a shared template for the dev and
+# prod docker files, or to use the command property in
+# the docker-compose.yaml to ovveride the prod command.
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile-frontend-dev
+    volumes:
+      - ./frontend/src:/frontend/src
+      - ./frontend/index.html:/frontend/index.html
+    ports:
+      - 9320:9320
+    environment:
+      VITE_API_URL: http://localhost:8080
+  backend:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile-backend-dev
+    environment:
+      NASA_API_KEY: ${NASA_API_KEY}
+      REDIS_URL: 'redis://redis:6379'
+      CACHE_SECONDS: '120'
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/src:/backend/src
+  redis:
+    image: redis
+    expose:
+      - '6379'
+    volumes:
+      - ./redis-data:/data

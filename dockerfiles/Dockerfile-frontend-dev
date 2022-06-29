@@ -1,0 +1,7 @@
+FROM node
+WORKDIR /frontend
+COPY ./frontend/package.json ./frontend/yarn.lock ./
+RUN yarn
+COPY ./frontend/index.html ./index.html
+COPY ./frontend/src ./src
+CMD yarn start

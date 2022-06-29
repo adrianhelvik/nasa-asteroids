@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if test -f ".env"; then
+  docker-compose up --build
+else
+  echo "You must create a .env file with NASA_API_KEY"
+fi

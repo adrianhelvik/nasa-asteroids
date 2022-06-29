@@ -1,0 +1,20 @@
+FROM openjdk:17-alpine
+
+WORKDIR /backend
+
+RUN apk add --update nodejs npm && npm i -g nodemon
+
+COPY ./backend/.gitignore ./.gitignore
+COPY ./backend/.mvn ./.mvn
+COPY ./backend/HELP.md ./HELP.md
+COPY ./backend/mvnw ./mvnw
+COPY ./backend/mvnw.cmd ./mvnw.cmd
+COPY ./backend/pom.xml ./pom.xml
+
+RUN ./mvnw dependency:resolve
+
+COPY ./backend/src ./src
+
+RUN ./mvnw install
+
+CMD nodemon -e java --exec ./mvnw spring-boot:run
