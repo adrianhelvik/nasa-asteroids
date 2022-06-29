@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.adrianhelvik.asteroids.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

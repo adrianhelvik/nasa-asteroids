@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.adrianhelvik.asteroids;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.ResponseEntity;

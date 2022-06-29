@@ -1,6 +1,6 @@
-package com.example.demo;
+package com.adrianhelvik.asteroids;
 
-import com.example.demo.RequestCache;
+import com.adrianhelvik.asteroids.RequestCache;
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.models.NasaApiResponse;
-import com.example.demo.NasaApi;
+import com.adrianhelvik.asteroids.models.NasaApiResponse;
+import com.adrianhelvik.asteroids.NasaApi;
 import java.util.*;
 import java.net.*;
 import java.io.*;
@@ -24,7 +24,7 @@ import java.io.*;
 
 @SpringBootApplication
 @RestController
-public class DemoApplication {
+public class AsteroidsApi {
   private static String apiKey = System.getenv("NASA_API_KEY");
 
 	public static void main(String[] args) {
@@ -32,7 +32,7 @@ public class DemoApplication {
       throw new RuntimeException("The environment variable NASA_API_KEY must be set!");
     }
 
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(AsteroidsApi.class, args);
 	}
 
   String toJson(NasaApiResponse response) throws Exception {

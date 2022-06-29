@@ -1,10 +1,10 @@
-package com.example.demo.models;
+package com.adrianhelvik.asteroids.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.models.Asteroid;
+import com.adrianhelvik.asteroids.models.Asteroid;
 import java.util.*;
 
 @JsonIgnoreProperties({ "links" })
