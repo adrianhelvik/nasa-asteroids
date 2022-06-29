@@ -45,7 +45,14 @@ public class AsteroidsApi {
   public String documentation() {
     var buffer = new StringBuffer();
 
-    buffer.append("Documentation:");
+    buffer.append("<!doctype html>");
+    buffer.append("<style>body { font-family: sans-serif; }</style>");
+    buffer.append("<meta charset=utf-8>");
+    buffer.append("<h1>Routes:</h1>");
+    buffer.append("<ul>");
+    buffer.append("<li>GET /v1/asteroids?from={date}&to={date}</li>");
+    buffer.append("<li>GET /v1/largest-asteroid/{year}</li>");
+    buffer.append("</ul>");
 
     return buffer.toString();
   }
@@ -53,27 +60,37 @@ public class AsteroidsApi {
   /**
    * Retrieve all asteroids between two dates.
    *
+   * TODO: Stream data from the Nasa API to achieve faster response times.
+   *
    * @param from  The initial date using the format yyyy-mm-dd
    * @param to    The final date (inclusive) using the format yyyy-mm-dd
    */
   @GetMapping("/v1/asteroids")
   public ResponseEntity<String> getAsteroids(
     @RequestParam("from") String from,
-    @RequestParam("to") String to
+    @RequestParam("to") String to,
+    @RequestParam(name="page", defaultValue="1") int page
   ) throws Exception {
-    var allAsteroidsResponse = new NasaApi(apiKey)
+    if (page < 1) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The parameter 'page' must be greater than or equal to 1");
+    }
+
+    var allAsteroids = new NasaApi(apiKey)
       .from(from)
       .to(to)
       .request();
 
-    var allAsteroids = allAsteroidsResponse.data;
-    var element_count = allAsteroidsResponse.element_count;
-
     var asteroids = new ArrayList<Asteroid>();
-    var perPage = 10;
+    int perPage = 10;
+    int i = 0;
 
     for (var asteroid : allAsteroids) {
-      asteroids.add(asteroid);
+      if (i >= perPage * (page - 1)) {
+        asteroids.add(asteroid);
+      }
+
+      i += 1;
+
       if (asteroids.size() >= perPage) {
         break;
       }
@@ -83,7 +100,9 @@ public class AsteroidsApi {
       new ObjectMapper().writeValueAsString(
         new ApiResponse<Asteroid>(
           asteroids,
-          element_count 
+          allAsteroids.size(),
+          page,
+          perPage
         )
       )
     );
@@ -105,13 +124,10 @@ public class AsteroidsApi {
     @PathVariable("year") int year,
     @RequestParam(name = "potentially-hazardous", defaultValue = "false") boolean potentiallyHazardous
   ) throws Exception {
-    var allAsteroidsResponse = new NasaApi(apiKey)
+    var asteroids = new NasaApi(apiKey)
       .from(Integer.toString(year) + "-01-01")
       .to(Integer.toString(year) + "-12-31")
       .request();
-
-    var asteroids = allAsteroidsResponse.data;
-    var element_count = allAsteroidsResponse.element_count;
 
     Asteroid largest = null;
 

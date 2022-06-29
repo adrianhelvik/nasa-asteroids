@@ -47,6 +47,20 @@ public class NasaApi {
     return this;
   }
 
+  /**
+   * Run the request against the cached Nasa API.
+   */
+  public List<Asteroid> request() throws Exception {
+    var apiResponse = NasaApiResponse.fromJson(performRequest());
+    var asteroids = new ArrayList<Asteroid>();
+
+    for (Asteroid asteroid : apiResponse.asteroids) {
+      asteroids.add(asteroid);
+    }
+
+    return asteroids;
+  }
+
   private String param(String input) throws Exception {
     return URLEncoder.encode(input, "UTF-8");
   }
@@ -69,16 +83,5 @@ public class NasaApi {
   String performRequest() throws Exception {
     validateParams();
     return RequestCache.get(baseUrl + "?from=" + param(from) + "&to=" + param(to) + "&api_key=" + param(apiKey));
-  }
-
-  public ApiResponse<Asteroid> request() throws Exception {
-    var apiResponse = NasaApiResponse.fromJson(performRequest());
-    var asteroids = new ArrayList<Asteroid>();
-
-    for (Asteroid asteroid : apiResponse.asteroids) {
-      asteroids.add(asteroid);
-    }
-
-    return new ApiResponse<Asteroid>(asteroids, apiResponse.element_count);
   }
 }
