@@ -1,8 +1,7 @@
-package com.example.demo;
+package com.example.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.example.demo.*;
 
 public class RelativeVelocity {
   public final String kilometers_per_second;

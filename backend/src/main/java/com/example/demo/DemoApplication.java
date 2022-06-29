@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.models.NasaApiResponse;
 import com.example.demo.NasaApi;
 import java.util.*;
 import java.net.*;
@@ -24,12 +25,10 @@ import java.io.*;
 @SpringBootApplication
 @RestController
 public class DemoApplication {
-  String apiKey = System.getenv("NASA_API_KEY");
+  private static String apiKey = System.getenv("NASA_API_KEY");
 
 	public static void main(String[] args) {
-    var apiKey = System.getenv("NASA_API_KEY");
-
-    if (System.getenv("NASA_API_KEY") == null) {
+    if (apiKey == null) {
       throw new RuntimeException("The environment variable NASA_API_KEY must be set!");
     }
 

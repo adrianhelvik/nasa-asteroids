@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.models.*;
 import com.example.demo.*;
 import java.net.*;
 
@@ -11,9 +12,9 @@ public class NasaApi {
   String apiKey;
 
   private final String baseUrl = "https://api.nasa.gov/neo/rest/v1/feed";
-  private String from = "";
-  private String to = "";
-  private String json = "";
+  private String from = null;
+  private String to = null;
+  private String json = null;
 
   public NasaApi(String apiKey) {
     this.apiKey = apiKey;

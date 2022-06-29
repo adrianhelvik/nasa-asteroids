@@ -1,9 +1,11 @@
-package com.example.demo;
+package com.example.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.demo.models.EstimatedDiameter;
+import com.example.demo.models.CloseApproachData;
 import java.util.*;
 
 @JsonIgnoreProperties({ "links", "neo_reference_id", "nasa_jpl_url", "is_sentry_object" })
