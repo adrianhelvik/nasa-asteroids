@@ -31,7 +31,6 @@ public class AsteroidsApi {
    * I'll leave it out for now.
    *
    * In production I would have probably use Sentry or Rollbar.
-   * I would probably also split the api across multiple controllers. 😀
    */
   private ErrorNotifier errorNotifier = new DummyErrorNotifier();
 

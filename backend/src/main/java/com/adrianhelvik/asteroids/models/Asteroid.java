@@ -9,7 +9,7 @@ import com.adrianhelvik.asteroids.models.CloseApproachData;
 import com.adrianhelvik.asteroids.ApiObject;
 import java.util.*;
 
-@JsonIgnoreProperties({ "links", "neo_reference_id", "nasa_jpl_url", "is_sentry_object" })
+@JsonIgnoreProperties({ "links", "nasa_jpl_url", "is_sentry_object" })
 public class Asteroid implements ApiObject {
   public final String id;
   public final String name;
@@ -19,6 +19,7 @@ public class Asteroid implements ApiObject {
   public final List<CloseApproachData> close_approach_data;
   public final String date;
   public final Double miss_distance_km;
+  public final String neo_reference_id;
 
   public Asteroid(
     @JsonProperty("id") String id,
@@ -27,6 +28,7 @@ public class Asteroid implements ApiObject {
     @JsonProperty("estimated_diameter") Map<String, EstimatedDiameter> estimated_diameter,
     @JsonProperty("is_potentially_hazardous_asteroid") boolean is_potentially_hazardous_asteroid,
     @JsonProperty("close_approach_data") List<CloseApproachData> close_approach_data,
+    @JsonProperty("neo_reference_id") String neo_reference_id,
     @JsonProperty("date") String date
   ) {
     this.id = id;
@@ -35,6 +37,7 @@ public class Asteroid implements ApiObject {
     this.estimated_diameter = estimated_diameter;
     this.is_potentially_hazardous_asteroid = is_potentially_hazardous_asteroid;
     this.close_approach_data = close_approach_data;
+    this.neo_reference_id = neo_reference_id;
     this.date = date;
     Double closestMiss = null;
     for (var approach : close_approach_data) {
@@ -54,6 +57,7 @@ public class Asteroid implements ApiObject {
       estimated_diameter,
       is_potentially_hazardous_asteroid,
       close_approach_data,
+      neo_reference_id,
       date
     );
   }

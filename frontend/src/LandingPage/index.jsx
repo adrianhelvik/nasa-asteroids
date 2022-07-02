@@ -1,3 +1,4 @@
+import HeartBrokenIcon from '@mui/icons-material/HeartBroken'
 import React, { useState, useEffect, useMemo } from 'react'
 import ErrorIcon from '@mui/icons-material/Error'
 import styled from 'styled-components'
@@ -13,26 +14,39 @@ export default function LandingPage() {
   const [currentWeek] = useState(getISOWeek(new Date()))
   const [selectedWeek, setSelectedWeek] = useState(currentWeek)
   const [asteroids, setAsteroids] = useState()
+  const [error, setError] = useState()
 
   const weeks = useMemo(() => {
     const weeks = []
     for (let i = 0; i < WEEK_COLUMNS * WEEK_ROWS; i++) {
-      weeks.unshift(currentWeek - i)
+      if (currentWeek - i >= 1) {
+        weeks.unshift(currentWeek - i)
+      } else {
+        // I would have handled weeks around the year change
+        // better here.
+        break
+      }
     }
     return weeks
   }, [currentWeek])
 
   useEffect(() => {
+    if (error) return
     let cancelled = false
     setAsteroids(null)
-    api.getAsteroidsInWeek(selectedWeek).then(({ data }) => {
-      if (cancelled) return
-      setAsteroids(data)
-    })
+    api.getAsteroidsInWeek(selectedWeek).then(
+      ({ data }) => {
+        if (cancelled) return
+        setAsteroids(data)
+      },
+      (error) => {
+        setError(error.message)
+      },
+    )
     return () => {
       cancelled = true
     }
-  }, [selectedWeek])
+  }, [selectedWeek, error])
 
   return (
     <Container>
@@ -57,7 +71,14 @@ export default function LandingPage() {
           </Grid>
         </Module>
         <Module title="Largest asteroids">
-          {asteroids == null && <StyledLoading type="bubbles" />}
+          {asteroids == null && !error && <StyledLoading type="bubbles" />}
+          {asteroids == null && error && (
+            <ErrorMessage>
+              <HeartBrokenIcon />
+              <div>{error}</div>
+              <Button onClick={() => setError(null)}>Retry</Button>
+            </ErrorMessage>
+          )}
           {asteroids?.map?.((asteroid) => (
             <Asteroid key={asteroid.id}>
               <div>
@@ -65,11 +86,15 @@ export default function LandingPage() {
                   <strong>
                     {asteroid.name}{' '}
                     {asteroid.is_potentially_hazardous && (
-                      <ErrorIcon style={{ color: 'var(--red)' }} />
+                      <ErrorIcon
+                        title="Potentially hazardous"
+                        style={{ color: 'var(--red)' }}
+                      />
                     )}
                   </strong>
                 </div>
                 <div>
+                  Nearest miss:{' '}
                   {new Intl.NumberFormat('en-US').format(
                     Math.round(asteroid.miss_distance_km),
                   )}{' '}
@@ -154,5 +179,36 @@ const Asteroid = styled.div`
     padding: 10px;
     border-radius: 5px;
     text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    :hover {
+      background-color: var(--mid-accent);
+    }
+    :hover:active {
+      background-color: var(--dark);
+    }
+  }
+`
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  margin: 50px;
+`
+
+const Button = styled.button`
+  border-radius: 5px;
+  border: none;
+  background-color: white;
+  color: var(--dark);
+  padding: 5px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+
+  :hover {
+    background-color: #eee;
+  }
+
+  :hover:active {
+    background-color: #aaa;
   }
 `

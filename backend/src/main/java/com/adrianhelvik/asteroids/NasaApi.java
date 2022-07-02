@@ -19,7 +19,8 @@ public class NasaApi {
 
   static Pattern datePattern = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
-  private final String baseUrl = "https://api.nasa.gov/neo/rest/v1/feed";
+  private final String feedBaseUrl = "https://api.nasa.gov/neo/rest/v1/feed";
+  private final String neoBaseUrl = "https://api.nasa.gov/neo/rest/v1/neo";
   private String from = null;
   private String to = null;
   private String json = null;
@@ -108,6 +109,11 @@ public class NasaApi {
     return asteroids;
   }
 
+  public Asteroid requestOne(String id) throws Exception {
+    // TODO: Return neo-request data for the details page
+    return null;
+  }
+
   private String param(String input) throws Exception {
     return URLEncoder.encode(input, "UTF-8");
   }
@@ -129,6 +135,6 @@ public class NasaApi {
 
   String performRequest() throws Exception {
     validateParams();
-    return RequestCache.get(baseUrl + "?start_date=" + param(from) + "&end_date=" + param(to) + "&api_key=" + param(apiKey));
+    return RequestCache.get(feedBaseUrl + "?start_date=" + param(from) + "&end_date=" + param(to) + "&api_key=" + param(apiKey));
   }
 }
