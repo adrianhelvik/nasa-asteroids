@@ -1,20 +1,34 @@
-FROM openjdk:17-alpine
+FROM ubuntu:20.04
 
 WORKDIR /backend
 
-RUN apk add --update nodejs npm && npm i -g nodemon
+# Install OpenJDK
+RUN apt-get update && apt-get install -y openjdk-17-jre
 
+# Install nodemon for automatic restarts 
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+      && apt-get update \
+      && apt-get install -y nodejs \
+      && apt-get install -y npm \
+      && npm i -g nodemon
+
+# Add project config files
 COPY ./backend/.gitignore ./.gitignore
 COPY ./backend/.mvn ./.mvn
-COPY ./backend/HELP.md ./HELP.md
 COPY ./backend/mvnw ./mvnw
 COPY ./backend/mvnw.cmd ./mvnw.cmd
 COPY ./backend/pom.xml ./pom.xml
 
+# Resolve dependencies before copying
+# the source code to prevent slow rebuilds
 RUN ./mvnw dependency:resolve
 
+# Copy source
 COPY ./backend/src ./src
 
+# Install dependencies
 RUN ./mvnw install
 
+# Run Java with nodemon watching .java files
+# for changes to get those sweet automatic restarts.
 CMD nodemon -e java --exec ./mvnw spring-boot:run

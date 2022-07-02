@@ -1,4 +1,49 @@
-<!doctype html>
-<meta charset="utf-8">
-<h1>Hello world</h1>
-<script type="module" src="./src/entry.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Asteroids!</title>
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Google Font: Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="./node_modules/boxicons/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        background: var(--dark);
+        color: white;
+      }
+      #root {
+        display: contents;
+      }
+      :root {
+        --accent: #7fffd5;
+        --dark: #333;
+        --dark-80: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/entry.js"></script>
+  </body>
+</html>
