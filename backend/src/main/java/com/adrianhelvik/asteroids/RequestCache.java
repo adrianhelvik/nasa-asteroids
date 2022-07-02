@@ -12,37 +12,36 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.lettuce.core.api.sync.*;
-import io.lettuce.core.api.*;
-import io.lettuce.core.*;
+import static com.adrianhelvik.asteroids.RedisSingleton.redis;
 import java.net.http.*;
 import java.util.*;
 import java.net.*;
 import java.io.*;
 
 public class RequestCache {
+  private static int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
+
   public static String get(String url) throws Exception {
-    var cached = syncCommands.get(url);
+    var cached = redis.get("request:" + url);
 
     if (cached != null) {
       System.out.println("Returned cached response");
       return cached;
     }
 
+    var errorStatus = redis.get("failure:" + url);
+
+    if (errorStatus != null) failure(errorStatus);
+
     var response = get(new URL(url));
 
-    syncCommands.setex(url, cacheSeconds, response);
+    redis.setex("request:" + url, cacheSeconds, response);
 
     return response;
   }
 
-  private static RedisCommands<String, String> syncCommands;
-  private static int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
-
-  static {
-    RedisClient redisClient = RedisClient.create(System.getenv("REDIS_URL"));
-    StatefulRedisConnection<String, String> connection = redisClient.connect();
-    syncCommands = connection.sync();
+  static void failure(String errorStatus) throws Exception {
+    throw new Exception("Request to NASA API failed with status code " + errorStatus + "!");
   }
 
   private static String get(URL url) throws Exception {
@@ -54,7 +53,8 @@ public class RequestCache {
     int status = connection.getResponseCode();
 
     if (status != 200) {
-      throw new Exception("Request to NASA API failed with status code " + Integer.toString(status) + "!");
+      redis.setex("failure:" + url, 5, Integer.toString(status));
+      failure(Integer.toString(status));
     }
 
     BufferedReader in = new BufferedReader(

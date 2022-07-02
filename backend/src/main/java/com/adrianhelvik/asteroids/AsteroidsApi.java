@@ -3,6 +3,7 @@ package com.adrianhelvik.asteroids;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.server.ResponseStatusException;
+import static com.adrianhelvik.asteroids.RedisSingleton.redis;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
@@ -17,6 +18,7 @@ import java.net.*;
 import java.io.*;
 
 @SpringBootApplication
+@CrossOrigin(origins = "*")
 @RestController
 public class AsteroidsApi {
   private static String apiKey = System.getenv("NASA_API_KEY");
@@ -106,6 +108,68 @@ public class AsteroidsApi {
         )
       )
     );
+  }
+
+  @GetMapping("/v1/weekly-asteroids/{week}")
+  public ResponseEntity<String> getAsteroidsInWeek(@PathVariable("week") int week) throws Exception {
+    System.out.printf("Retrieving weekly asteroids for week: %d%n", week);
+
+    var today = new Date();
+
+    var calendar = Calendar.getInstance();
+    calendar.setFirstDayOfWeek(Calendar.MONDAY);
+    calendar.setTime(today);
+    calendar.set(Calendar.WEEK_OF_YEAR, week);
+
+    var year = calendar.get(Calendar.YEAR);
+
+    calendar.setWeekDate(year, week, Calendar.MONDAY);
+    var monday = calendar.getTime();
+
+    calendar.setWeekDate(year, week, Calendar.SUNDAY);
+    var finalDay = calendar.getTime();
+
+    if (finalDay.after(today)) finalDay = today;
+
+    var asteroids = new NasaApi(apiKey)
+        .from(monday)
+        .to(finalDay)
+        .request();
+
+    Collections.sort(asteroids, new Comparator<Asteroid>() {
+      @Override
+      public int compare(Asteroid a, Asteroid b) {
+        if (a.miss_distance_km == b.miss_distance_km) return 0;
+        if (a.miss_distance_km < b.miss_distance_km) return -1;
+        return 1;
+      }
+    });
+
+    // Store the asteroids for later retrieval. For a production
+    // implementation I'd use a relational database instead of Redis.
+    for (var asteroid : asteroids) {
+      redis.set("asteroid:" + asteroid.id, new ObjectMapper().writeValueAsString(asteroid));
+    }
+
+    return ResponseEntity.status(200).body(
+      new ObjectMapper().writeValueAsString(
+        new ApiResponse<Asteroid>(
+          asteroids,
+          asteroids.size(),
+          0,
+          asteroids.size()
+        )
+      )
+    );
+  }
+
+  @GetMapping("/v1/asteroids/{id}")
+  public ResponseEntity<String> getAsteroidById(@PathVariable("id") String id) {
+    var json = redis.get("asteroid:" + id);
+
+    if (json == null) return ResponseEntity.status(404).body("Not found");
+
+    return ResponseEntity.status(200).body(json);
   }
 
   /**

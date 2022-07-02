@@ -39,6 +39,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
       <artifactId>lettuce-core</artifactId>
       <version>6.1.8.RELEASE</version>
     </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.4.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

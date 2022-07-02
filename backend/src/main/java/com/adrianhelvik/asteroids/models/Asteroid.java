@@ -18,6 +18,7 @@ public class Asteroid implements ApiObject {
   public final boolean is_potentially_hazardous_asteroid;
   public final List<CloseApproachData> close_approach_data;
   public final String date;
+  public final Double miss_distance_km;
 
   public Asteroid(
     @JsonProperty("id") String id,
@@ -35,6 +36,14 @@ public class Asteroid implements ApiObject {
     this.is_potentially_hazardous_asteroid = is_potentially_hazardous_asteroid;
     this.close_approach_data = close_approach_data;
     this.date = date;
+    Double closestMiss = null;
+    for (var approach : close_approach_data) {
+      double missDistance = Double.parseDouble(approach.miss_distance.kilometers);
+      if (closestMiss == null || missDistance < closestMiss) {
+        closestMiss = missDistance;
+      }
+    }
+    this.miss_distance_km = closestMiss;
   }
 
   protected Asteroid withDate(String date) {
@@ -48,5 +57,8 @@ public class Asteroid implements ApiObject {
       date
     );
   }
-}
 
+  public static Asteroid fromJson(String json) throws Exception {
+    return new ObjectMapper().readValue(json, new TypeReference<Asteroid>(){});
+  }
+}

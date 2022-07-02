@@ -4,13 +4,14 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.adrianhelvik.asteroids.models.*;
 import org.springframework.http.HttpStatus;
 import com.adrianhelvik.asteroids.*;
 import java.util.ArrayList;
 import java.util.regex.*;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Date;
 import java.net.*;
 
 public class NasaApi {
@@ -27,6 +28,32 @@ public class NasaApi {
     this.apiKey = apiKey;
   }
 
+  private String padStart(String base, int length, char padding) {
+    var result = base;
+    while (result.length() < length) {
+      result = padding + base;
+    }
+    return result;
+  }
+
+  private String fmtDate(Date date) {
+    var calendar = Calendar.getInstance();
+
+    calendar.setTime(date);
+
+    var year = calendar.get(Calendar.YEAR);
+    var month = calendar.get(Calendar.MONTH) + 1;
+    var day = calendar.get(Calendar.DAY_OF_MONTH);
+
+    var result = Integer.toString(year)
+      + "-"
+      + padStart(Integer.toString(month), 2, '0')
+      + "-"
+      + padStart(Integer.toString(day), 2, '0');
+
+    return result;
+  }
+
   /**
    * Set the `to` parameter.
    *
@@ -38,12 +65,32 @@ public class NasaApi {
   }
 
   /**
+   * Set the `to` parameter using a Date.
+   *
+   * @param from A Date object.
+   */
+  public NasaApi from(Date from) {
+    this.from = fmtDate(from);
+    return this;
+  }
+
+  /**
    * Set the `from` parameter.
    *
    * @param to A date string on the format yyyy-mm-dd.
    */
   public NasaApi to(String to) {
     this.to = to;
+    return this;
+  }
+
+  /**
+   * Set the `from` parameter using a Date object.
+   *
+   * @param to A Date object.
+   */
+  public NasaApi to(Date to) {
+    this.to = fmtDate(to);
     return this;
   }
 
