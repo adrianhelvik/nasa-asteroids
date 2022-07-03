@@ -70,7 +70,7 @@ export default function LandingPage() {
             ))}
           </Grid>
         </Module>
-        <Module title="Largest asteroids">
+        <Module title="Closest asteroids">
           {asteroids == null && !error && <StyledLoading type="bubbles" />}
           {asteroids == null && error && (
             <ErrorMessage>
