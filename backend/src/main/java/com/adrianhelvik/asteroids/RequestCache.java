@@ -25,9 +25,29 @@ import java.io.*;
 public class RequestCache {
     private static final int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
 
+    private static String getFromCache(String url) throws Exception {
+      String cached;
+      int tries = 0;
+
+      while (true) {
+        var requesting = redis.get("requesting:" + url);
+        cached = redis.get("request:" + url);
+
+        if (cached == null && requesting != null && tries < 10) {
+          System.out.println("Failed to get response from cache");
+          Thread.sleep(1);
+          tries++;
+        } else {
+          break;
+        }
+      }
+
+      return cached;
+    }
+
     public static String get(String url) throws Exception {
         System.out.println("GET " + url);
-        var cached = redis.get("request:" + url);
+        String cached = getFromCache(url);
 
         if (cached != null) {
             System.out.println("Returned cached response");
@@ -37,6 +57,8 @@ public class RequestCache {
         var errorStatus = redis.get("failure:" + url);
 
         if (errorStatus != null) failure(errorStatus);
+
+        redis.setex("requesting:" + url, 5, "yes");
 
         var response = get(new URL(url));
 
