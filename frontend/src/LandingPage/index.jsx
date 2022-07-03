@@ -1,5 +1,6 @@
 import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import React, { useState, useEffect, useMemo } from "react";
+import useSearchState from "../useSearchState";
 import fmtDiameter from "../fmtDiameter";
 import styled from "styled-components";
 import { getISOWeek } from "date-fns";
@@ -12,9 +13,18 @@ const WEEK_COLUMNS = 5;
 const WEEK_ROWS = 4;
 
 export default function LandingPage() {
-  const [currentWeek] = useState(getISOWeek(new Date()));
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
-  const [potentiallyHazardous, setOnlyHazardous] = useState(false);
+  const currentWeek = useMemo(() => {
+    return getISOWeek(new Date());
+  }, []);
+
+  const [potentiallyHazardous, setOnlyHazardous] = useSearchState(
+    "potentially-hazardous",
+    false
+  );
+  const [selectedWeek, setSelectedWeek] = useSearchState(
+    "selected-week",
+    currentWeek
+  );
   const [menuVisible, setMenuVisible] = useState(false);
   const [asteroids, setAsteroids] = useState();
   const [error, setError] = useState();

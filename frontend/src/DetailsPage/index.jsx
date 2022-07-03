@@ -2,6 +2,7 @@ import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import React, { useEffect, useState, useMemo } from "react";
 import WarningIcon from "@mui/icons-material/Warning";
 import CheckIcon from "@mui/icons-material/Check";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import fmtDiameter from "../fmtDiameter";
 import styled from "styled-components";
@@ -11,6 +12,7 @@ import api from "../api";
 export default function DetailsPage() {
   const [asteroid, setAsteroid] = useState(null);
   const [error, setError] = useState();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -55,7 +57,13 @@ export default function DetailsPage() {
   return (
     <div>
       <Header>
-        <HomeLink href="/">
+        <HomeLink
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate(-1);
+          }}
+        >
           <span className="bx bx-meteor" />
           <span className="title-text">Go back</span>
         </HomeLink>
