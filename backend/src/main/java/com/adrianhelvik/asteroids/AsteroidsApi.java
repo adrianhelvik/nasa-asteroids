@@ -94,7 +94,7 @@ public class AsteroidsApi {
     }
 
     @GetMapping("/v1/weekly-asteroids/{week}")
-    public ResponseEntity<String> getAsteroidsInWeek(@PathVariable("week") int week) throws Exception {
+    public ResponseEntity<String> getAsteroidsInWeek(@PathVariable("week") int week, @RequestParam("potentially-hazardous") boolean potentiallyHazardous) throws Exception {
         System.out.printf("Retrieving weekly asteroids for week: %d%n", week);
 
         var today = new Date();
@@ -115,6 +115,16 @@ public class AsteroidsApi {
         if (finalDay.after(today)) finalDay = today;
 
         var asteroids = new NasaApi(apiKey).from(monday).to(finalDay).request();
+
+        if (potentiallyHazardous) {
+          var result = new ArrayList<Asteroid>();
+          for (var asteroid : asteroids) {
+            if (asteroid.is_potentially_hazardous_asteroid) {
+              result.add(asteroid);
+            }
+          }
+          asteroids = result;
+        }
 
         asteroids.sort(new Comparator<Asteroid>() {
             @Override

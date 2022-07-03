@@ -14,7 +14,7 @@ const Container = styled.div`
   --padding: 10px;
   --border-radius: 5px;
 
-  max-height: 80vh;
+  max-height: 60vh;
   overflow: auto;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;

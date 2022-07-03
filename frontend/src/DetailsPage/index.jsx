@@ -1,57 +1,56 @@
-import HeartBrokenIcon from '@mui/icons-material/HeartBroken'
-import React, { useEffect, useState, useMemo } from 'react'
-import DangerousIcon from '@mui/icons-material/Dangerous'
-import CheckIcon from '@mui/icons-material/Check'
-import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
-import Loading from 'react-loading'
-import api from '../api'
+import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
+import React, { useEffect, useState, useMemo } from "react";
+import WarningIcon from "@mui/icons-material/Warning";
+import CheckIcon from "@mui/icons-material/Check";
+import { useParams } from "react-router-dom";
+import fmtDiameter from "../fmtDiameter";
+import styled from "styled-components";
+import Loading from "react-loading";
+import api from "../api";
 
 export default function DetailsPage() {
-  const [asteroid, setAsteroid] = useState(null)
-  const [error, setError] = useState()
-  const { id } = useParams()
+  const [asteroid, setAsteroid] = useState(null);
+  const [error, setError] = useState();
+  const { id } = useParams();
 
   useEffect(() => {
-    if (error) return
-    let cancelled = false
-    let retries = 0
+    if (error) return;
+    let cancelled = false;
+    let retries = 0;
 
     const retrieve = () => {
       api.getAsteroidById(id).then(
         (asteroid) => {
-          if (cancelled) return
-          setAsteroid(asteroid)
+          if (cancelled) return;
+          setAsteroid(asteroid);
         },
         (error) => {
-          if (cancelled) return
+          if (cancelled) return;
           if (retries > 5) {
-            setAsteroid(null)
-            setError(error.message)
+            setAsteroid(null);
+            setError(error.message);
           } else {
             setTimeout(() => {
-              retries += 1
-              retrieve()
-            }, 200)
+              retries += 1;
+              retrieve();
+            }, 200);
           }
-        },
-      )
-    }
+        }
+      );
+    };
 
-    retrieve()
+    retrieve();
 
     return () => {
-      cancelled = true
-    }
-  }, [id, error])
+      cancelled = true;
+    };
+  }, [id, error]);
 
   const view = useMemo(() => {
-    if (error) return 'error'
-    if (asteroid) return 'asteroid'
-    return 'loading'
-  }, [error, asteroid])
-
-  //if (asteroid) asteroid.is_potentially_hazardous = true
+    if (error) return "error";
+    if (asteroid) return "asteroid";
+    return "loading";
+  }, [error, asteroid]);
 
   return (
     <div>
@@ -62,22 +61,22 @@ export default function DetailsPage() {
         </HomeLink>
         <H1>{asteroid?.name}</H1>
       </Header>
-      {view === 'loading' && <StyledLoading type="bubbles" />}
-      {view === 'error' && (
+      {view === "loading" && <StyledLoading type="bubbles" />}
+      {view === "error" && (
         <ErrorMessage>
           <HeartBrokenIcon />
           <div>{error}</div>
           <Button onClick={() => setError(null)}>Try again</Button>
         </ErrorMessage>
       )}
-      {view === 'asteroid' && (
+      {view === "asteroid" && (
         <Main>
-          {asteroid.is_potentially_hazardous && (
+          {asteroid.is_potentially_hazardous_asteroid && (
             <DangerStatus>
-              <DangerousIcon style={{ fontSize: 30 }} /> Potentially hazardous!
+              <WarningIcon style={{ fontSize: 30 }} /> Potentially hazardous!
             </DangerStatus>
           )}
-          {!asteroid.is_potentially_hazardous && (
+          {!asteroid.is_potentially_hazardous_asteroid && (
             <SafeStatus>
               <CheckIcon style={{ fontSize: 30 }} /> <span>Not hazardous</span>
             </SafeStatus>
@@ -89,9 +88,9 @@ export default function DetailsPage() {
                 <div>Nearest miss</div>
               </InfoHeader>
               <InfoContent>
-                {new Intl.NumberFormat('en-US').format(
-                  Math.round(asteroid.miss_distance_km),
-                )}{' '}
+                {new Intl.NumberFormat("en-US").format(
+                  Math.round(asteroid.miss_distance_km)
+                )}{" "}
                 km
               </InfoContent>
             </InfoBox>
@@ -101,30 +100,23 @@ export default function DetailsPage() {
                 <div>Est. diameter</div>
               </InfoHeader>
               <InfoContent>
-                {asteroid.estimated_diameter.meters.estimated_diameter_min.toFixed(
-                  2,
-                )}
-                m to{' '}
-                {asteroid.estimated_diameter.meters.estimated_diameter_max.toFixed(
-                  2,
-                )}
-                m
+                {fmtDiameter(asteroid.estimated_diameter)}
               </InfoContent>
             </InfoBox>
           </Grid>
         </Main>
       )}
     </div>
-  )
+  );
 }
 
 const StyledLoading = styled(Loading)`
   margin: 40px auto;
-`
+`;
 
 const InfoBox = styled.div`
   display: contents;
-`
+`;
 
 const InfoHeader = styled.h3`
   font-weight: normal;
@@ -146,7 +138,7 @@ const InfoHeader = styled.h3`
   .bx {
     font-size: 60px;
   }
-`
+`;
 
 const InfoContent = styled.p`
   margin: 0;
@@ -159,7 +151,7 @@ const InfoContent = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const Main = styled.main`
   max-width: 700px;
@@ -168,13 +160,13 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   gap: 30px;
-`
+`;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 20px 0;
-`
+`;
 
 const Header = styled.header`
   background-color: white;
@@ -182,7 +174,7 @@ const Header = styled.header`
   display: flex;
   gap: 20px;
   align-items: center;
-`
+`;
 
 const HomeLink = styled.a`
   background-color: var(--mid-accent);
@@ -200,7 +192,7 @@ const HomeLink = styled.a`
   transition: background-color 0.3s;
 
   ::after {
-    content: '';
+    content: "";
     display: block;
     width: 200px;
     height: 80px;
@@ -247,23 +239,23 @@ const HomeLink = styled.a`
     font-size: 35px;
     color: white;
   }
-`
+`;
 
 const H1 = styled.h1`
   color: var(--dark-accent);
   margin: 0;
-`
+`;
 
 const Status = styled.div`
-  padding: 20px;
-  border-radius: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
   text-align: center;
   font-size: 30px;
   color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
   border: 3px solid var(--border);
   background-color: var(--bg);
   width: fit-content;
@@ -277,7 +269,7 @@ const Status = styled.div`
     border-radius: 25px;
     padding: 5px;
   }
-`
+`;
 
 const DangerStatus = styled(Status)`
   --text: var(--dark);
@@ -285,7 +277,7 @@ const DangerStatus = styled(Status)`
   --bg: var(--red);
   --icon-bg: var(--red);
   --icon-fg: var(--dark);
-`
+`;
 
 const SafeStatus = styled(Status)`
   --text: var(--accent);
@@ -293,7 +285,7 @@ const SafeStatus = styled(Status)`
   --bg: var(--very-dark-accent);
   --icon-fg: var(--dark-accent);
   --icon-bg: var(--accent);
-`
+`;
 
 const ErrorMessage = styled.div`
   color: var(--red);
@@ -304,7 +296,7 @@ const ErrorMessage = styled.div`
   svg {
     font-size: 150px;
   }
-`
+`;
 
 const Button = styled.button`
   background-color: var(--dark-accent);
@@ -316,4 +308,4 @@ const Button = styled.button`
   margin-top: 40px;
   border: none;
   cursor: pointer;
-`
+`;
