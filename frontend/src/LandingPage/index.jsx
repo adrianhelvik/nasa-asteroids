@@ -162,7 +162,9 @@ export default function LandingPage() {
                   {fmtDiameter(asteroid.estimated_diameter)}
                 </div>
               </div>
-              <a href={`/asteroid/${asteroid.id}`}>See more</a>
+              <a href={`/asteroid/${asteroid.id}`}>
+                <i className="bx bxs-info-circle"></i> Details
+              </a>
             </Asteroid>
           ))}
         </AsteroidList>
@@ -258,8 +260,12 @@ const Asteroid = styled.div`
   grid-template-columns: 1fr auto;
   a {
     background-color: var(--dark-accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: white;
-    padding: 10px;
+    padding: 8px 10px;
+    padding-right: 13px;
     border-radius: 5px;
     text-decoration: none;
     cursor: pointer;
@@ -272,12 +278,16 @@ const Asteroid = styled.div`
     }
   }
 
-  .bx {
+  & .bx-meteor {
     font-size: 30px;
   }
 
-  &.dangerous .bx {
+  &.dangerous .bx-meteor {
     color: var(--red, red);
+  }
+
+  & .bxs-info-circle {
+    font-size: 20px;
   }
 `;
 
@@ -371,12 +381,13 @@ const SelectedWeek = styled.div`
     border-radius: 5px;
     padding: 10px;
     font-size: inherit;
-    font-weight: normal;
+    font-weight: bold;
     ::before {
       content: "Week: ";
       font-size: inherit;
       letter-spacing: 0px;
-      font-weight: bold;
+      font-weight: normal;
+      opacity: 1;
     }
   }
 `;

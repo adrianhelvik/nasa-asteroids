@@ -1,9 +1,23 @@
 import styled, { keyframes, css } from "styled-components";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Modal({ $visible, onBackDropClick, children }) {
+  const [dialogOpen, setDialogOpen] = useState($visible);
+
+  useEffect(() => {
+    if ($visible) setDialogOpen(true);
+    else {
+      const timeout = setTimeout(() => {
+        setDialogOpen(false);
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [$visible]);
+
   return (
-    <Dialog open={$visible}>
+    <Dialog open={dialogOpen}>
       <Backdrop $visible={$visible} onClick={onBackDropClick} />
       <Menu $visible={$visible}>{children}</Menu>
     </Dialog>

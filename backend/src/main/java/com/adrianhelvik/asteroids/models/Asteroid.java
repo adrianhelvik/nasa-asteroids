@@ -1,16 +1,12 @@
 package com.adrianhelvik.asteroids.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.adrianhelvik.asteroids.models.EstimatedDiameter;
-import com.adrianhelvik.asteroids.models.CloseApproachData;
-import com.adrianhelvik.asteroids.ApiObject;
+
 import java.util.*;
 
 @JsonIgnoreProperties({ "links", "nasa_jpl_url", "is_sentry_object" })
-public class Asteroid implements ApiObject {
+public class Asteroid {
   public final String id;
   public final String name;
   public final float absolute_magnitude_h;
@@ -60,9 +56,5 @@ public class Asteroid implements ApiObject {
       neo_reference_id,
       date
     );
-  }
-
-  public static Asteroid fromJson(String json) throws Exception {
-    return new ObjectMapper().readValue(json, new TypeReference<Asteroid>(){});
   }
 }
