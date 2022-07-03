@@ -22,6 +22,7 @@ public class RequestCache {
   private static int cacheSeconds = Integer.parseInt(System.getenv("CACHE_SECONDS"));
 
   public static String get(String url) throws Exception {
+    System.out.println("GET " + url);
     var cached = redis.get("request:" + url);
 
     if (cached != null) {

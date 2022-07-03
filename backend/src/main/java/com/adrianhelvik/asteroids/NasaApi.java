@@ -110,10 +110,8 @@ public class NasaApi {
   }
 
   public DetailedAsteroid requestOne(String id) throws Exception {
-    var json = redis.get("asteroid:" + id);
-    if (json == null) {
-      return null;
-    }
+    var json = RequestCache.get(neoBaseUrl + "/" + param(id) + "?api_key=" + param(apiKey));
+
     return new ObjectMapper().readValue(json, new TypeReference<>(){});
   }
 

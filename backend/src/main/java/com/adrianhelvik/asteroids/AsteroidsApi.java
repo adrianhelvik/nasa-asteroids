@@ -1,16 +1,20 @@
 package com.adrianhelvik.asteroids;
 
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.server.ResponseStatusException;
+
 import static com.adrianhelvik.asteroids.RedisSingleton.redis;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.adrianhelvik.asteroids.models.*;
 import org.springframework.http.HttpStatus;
+
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,9 +71,13 @@ public class AsteroidsApi {
      * @param to   The final date (inclusive) using the format yyyy-mm-dd
      */
     @GetMapping("/v1/asteroids")
-    public ResponseEntity<String> getAsteroids(@RequestParam("from") String from, @RequestParam("to") String to, @RequestParam(name = "page", defaultValue = "1") int page) throws Exception {
+    public ResponseEntity<String> getAsteroids(
+            @RequestParam("from") String from, @RequestParam("to") String to,
+            @RequestParam(name = "page", defaultValue = "1") int page
+    ) throws Exception {
         if (page < 1) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The parameter 'page' must be greater than or equal to 1");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "The parameter 'page' must be greater than or equal to 1");
         }
 
         var allAsteroids = new NasaApi(apiKey).from(from).to(to).request();
@@ -90,11 +98,14 @@ public class AsteroidsApi {
             }
         }
 
-        return ResponseEntity.status(200).body(new ObjectMapper().writeValueAsString(new ApiResponse<Asteroid>(asteroids, allAsteroids.size(), page, perPage)));
+        return ResponseEntity.status(200).body(new ObjectMapper().writeValueAsString(
+                new ApiResponse<Asteroid>(asteroids, allAsteroids.size(), page, perPage)));
     }
 
     @GetMapping("/v1/weekly-asteroids/{week}")
-    public ResponseEntity<String> getAsteroidsInWeek(@PathVariable("week") int week, @RequestParam("potentially-hazardous") boolean potentiallyHazardous) throws Exception {
+    public ResponseEntity<String> getAsteroidsInWeek(
+            @PathVariable("week") int week, @RequestParam("potentially-hazardous") boolean potentiallyHazardous
+    ) throws Exception {
         System.out.printf("Retrieving weekly asteroids for week: %d%n", week);
 
         var today = new Date();
@@ -117,13 +128,13 @@ public class AsteroidsApi {
         var asteroids = new NasaApi(apiKey).from(monday).to(finalDay).request();
 
         if (potentiallyHazardous) {
-          var result = new ArrayList<Asteroid>();
-          for (var asteroid : asteroids) {
-            if (asteroid.is_potentially_hazardous_asteroid) {
-              result.add(asteroid);
+            var result = new ArrayList<Asteroid>();
+            for (var asteroid : asteroids) {
+                if (asteroid.is_potentially_hazardous_asteroid) {
+                    result.add(asteroid);
+                }
             }
-          }
-          asteroids = result;
+            asteroids = result;
         }
 
         asteroids.sort(new Comparator<Asteroid>() {
@@ -133,13 +144,9 @@ public class AsteroidsApi {
             }
         });
 
-        // Store the asteroids for later retrieval. For a production
-        // implementation I'd use a relational database instead of Redis.
-        for (var asteroid : asteroids) {
-            redis.set("asteroid:" + asteroid.id, new ObjectMapper().writeValueAsString(asteroid));
-        }
-
-        return ResponseEntity.status(200).body(new ObjectMapper().writeValueAsString(new ApiResponse<Asteroid>(asteroids, asteroids.size(), 0, asteroids.size())));
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(
+                new ObjectMapper().writeValueAsString(
+                        new ApiResponse<Asteroid>(asteroids, asteroids.size(), 0, asteroids.size())));
     }
 
     @GetMapping("/v1/asteroids/{id}")
@@ -147,12 +154,12 @@ public class AsteroidsApi {
         var asteroid = new NasaApi(apiKey).requestOne(id);
 
         if (asteroid == null) {
-            return ResponseEntity.status(404).body("Not found");
+            return ResponseEntity.status(404).contentType(MediaType.APPLICATION_JSON).body("Not found");
         }
 
         var json = new ObjectMapper().writeValueAsString(asteroid);
 
-        return ResponseEntity.status(200).body(json);
+        return ResponseEntity.status(200).contentType(MediaType.APPLICATION_JSON).body(json);
     }
 
     /**
@@ -167,8 +174,12 @@ public class AsteroidsApi {
      * @param potentiallyHazardous Show the largest *hazardous* asteroid instead.
      */
     @GetMapping("/v1/largest-asteroid/{year}")
-    public ResponseEntity<String> getLargestAstroids(@PathVariable("year") int year, @RequestParam(name = "potentially-hazardous", defaultValue = "false") boolean potentiallyHazardous) throws Exception {
-        var asteroids = new NasaApi(apiKey).from(Integer.toString(year) + "-01-01").to(Integer.toString(year) + "-12-31").request();
+    public ResponseEntity<String> getLargestAstroids(
+            @PathVariable("year") int year,
+            @RequestParam(name = "potentially-hazardous", defaultValue = "false") boolean potentiallyHazardous
+    ) throws Exception {
+        var asteroids = new NasaApi(apiKey).from(Integer.toString(year) + "-01-01").to(
+                Integer.toString(year) + "-12-31").request();
 
         Asteroid largest = null;
 
