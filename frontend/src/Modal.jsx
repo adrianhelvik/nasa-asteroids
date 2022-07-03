@@ -1,33 +1,68 @@
-import styled, { css } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import React from "react";
 
 export default function Modal({ $visible, onBackDropClick, children }) {
   return (
-    <>
+    <Dialog open={$visible}>
       <Backdrop $visible={$visible} onClick={onBackDropClick} />
       <Menu $visible={$visible}>{children}</Menu>
-    </>
+    </Dialog>
   );
 }
 
+const Dialog = styled.dialog`
+  border: none;
+  background: transparent;
+`;
+
 const Menu = styled.div`
-  position: absolute;
+  position: fixed;
   left: 50%;
+  top: max(0px, calc(50% - 100px));
   transform-origin: 50% 50%;
-  transform: translateX(-50%) translateY(-90%) scale(1);
   overflow: hidden;
   z-index: 1;
 
-  box-shadow: var(--box-shadow-4);
-  transition: 0.25s;
+  ${(p) =>
+    p.$visible &&
+    css`
+      animation: ${keyframes`
+        from {
+          transform: translateX(-50%) translateY(-50%) scale(0);
+          border-radius: 1000px;
+          opacity: 0;
+        }
+        to {
+          transform: translateX(-50%) translateY(-50%) scale(1);
+          border-radius: 0;
+          opacity: 1;
+        }
+      `} 0.5s forwards;
+    `};
 
   ${(p) =>
     !p.$visible &&
     css`
-      transform: translateX(-50%) translateY(-90%) scale(0);
-      border-radius: 1000px;
+      animation: ${keyframes`
+        from {
+          transform: translateX(-50%) translateY(-50%) scale(1);
+          border-radius: 0;
+          opacity: 1;
+        }
+        to {
+          transform: translateX(-50%) translateY(-50%) scale(0);
+          border-radius: 1000px;
+          opacity: 0;
+        }
+      `} 0.5s forwards;
+    `};
+
+  box-shadow: var(--box-shadow-4);
+
+  ${(p) =>
+    !p.$visible &&
+    css`
       pointer-events: none;
-      opacity: 0;
     `};
 `;
 

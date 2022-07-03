@@ -80,7 +80,7 @@ export default function LandingPage() {
         <SelectedWeek>{selectedWeek}</SelectedWeek>
       </SelectedWeekWrapper>
       <KeyboardHelp>
-        <h4>Shortcuts</h4>
+        <h4>Shortcuts:</h4>
         <div className="items">
           <div>
             <i className="bx bx-caret-left-square" />
@@ -165,6 +165,20 @@ const Main = styled.main`
   padding: 20px;
   max-width: 900px;
   margin: 0 auto;
+
+  @media (max-width: 800px) {
+    ::after {
+      content: "";
+      display: block;
+      height: 80px;
+      background-color: white;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: var(--box-shadow-3);
+    }
+  }
 `;
 
 const Header = styled.header`
@@ -217,6 +231,11 @@ const AsteroidList = styled.div`
   display: grid;
   gap: 20px;
   grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
 `;
 
 const Asteroid = styled.div`
@@ -304,6 +323,20 @@ const SelectedWeekWrapper = styled.button`
   :hover:active {
     background-color: var(--very-dark-accent);
   }
+
+  @media (max-width: 800px) {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    box-shadow: var(--box-shadow-2);
+    background-color: var(--accent);
+    color: var(--dark);
+    width: auto;
+    height: auto;
+    z-index: 1;
+    border-radius: 5px;
+    padding: 5px;
+  }
 `;
 
 const SelectedWeek = styled.div`
@@ -319,9 +352,39 @@ const SelectedWeek = styled.div`
     letter-spacing: 4px;
     font-weight: normal;
   }
+  @media (max-width: 800px) {
+    font-size: 20px;
+    display: flex;
+    letter-pacing: 0px !important;
+    height: auto;
+    width: auto;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: inherit;
+    font-weight: normal;
+    ::before {
+      content: "Week: ";
+      font-size: inherit;
+      letter-spacing: 0px;
+      font-weight: bold;
+    }
+  }
 `;
 
 const KeyboardHelp = styled.div`
+  @media (max-width: 899px) {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 15px 20px;
+  }
+
   width: fit-content;
   margin: 0 auto;
   margin-top: 10px;
@@ -348,10 +411,17 @@ const Label = styled.label`
   display: block;
   width: fit-content;
   margin: 0 auto;
+  margin-top: 20px;
   background-color: var(--red);
   color: white;
   padding: 10px;
   border-radius: 5px;
-  position: sticky;
-  top: 10px;
+
+  @media (max-width: 800px) {
+    box-shadow: var(--box-shadow-3);
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1;
+  }
 `;
