@@ -232,7 +232,8 @@ const Week = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 25px;
+  font-size: 20px;
+  padding: 10px;
 `;
 
 const Grid = styled.div`
