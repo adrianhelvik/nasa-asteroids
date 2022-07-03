@@ -57,7 +57,7 @@ export default function DetailsPage() {
       <Header>
         <HomeLink href="/">
           <span className="bx bx-meteor" />
-          <span className="title-text">Asteroid Watcher</span>
+          <span className="title-text">Go back</span>
         </HomeLink>
         <H1>{asteroid?.name}</H1>
       </Header>
@@ -190,11 +190,12 @@ const HomeLink = styled.a`
   height: 80px;
   position: relative;
   transition: background-color 0.3s;
+  font-weight: bold;
 
   ::after {
     content: "";
     display: block;
-    width: 200px;
+    width: 90px;
     height: 80px;
     background-color: var(--mid-accent);
     position: absolute;

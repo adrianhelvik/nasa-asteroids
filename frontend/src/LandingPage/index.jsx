@@ -20,7 +20,7 @@ export default function LandingPage() {
   const [error, setError] = useState();
 
   useEffect(() => {
-    const onKeyUp = (event) => {
+    const onKeyDown = (event) => {
       if (event.key === "ArrowLeft") {
         setError();
         setSelectedWeek((week) => Math.max(week - 1, 1));
@@ -30,9 +30,9 @@ export default function LandingPage() {
         setSelectedWeek((week) => Math.min(week + 1, currentWeek));
       }
     };
-    document.addEventListener("keyup", onKeyUp);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener("keyup", onKeyUp);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [currentWeek]);
 
@@ -71,7 +71,7 @@ export default function LandingPage() {
   console.log(asteroids);
 
   return (
-    <Container>
+    <>
       <Header>
         <span className="bx bx-meteor" />
         <h1>Nearest asteroids</h1>
@@ -157,13 +157,9 @@ export default function LandingPage() {
           ))}
         </AsteroidList>
       </Main>
-    </Container>
+    </>
   );
 }
-
-const Container = styled.main`
-  height: 100%;
-`;
 
 const Main = styled.main`
   padding: 20px;
@@ -356,4 +352,6 @@ const Label = styled.label`
   color: white;
   padding: 10px;
   border-radius: 5px;
+  position: sticky;
+  top: 10px;
 `;
