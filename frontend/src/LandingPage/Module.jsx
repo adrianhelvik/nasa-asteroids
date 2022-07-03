@@ -13,6 +13,11 @@ export default function Module({ title, children }) {
 const Container = styled.div`
   --padding: 10px;
   --border-radius: 5px;
+
+  max-height: 80vh;
+  overflow: auto;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 `;
 
 const Title = styled.h2`
@@ -23,6 +28,8 @@ const Title = styled.h2`
   color: var(--dark);
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
+  position: sticky;
+  top: 0;
 `;
 
 const Content = styled.div`

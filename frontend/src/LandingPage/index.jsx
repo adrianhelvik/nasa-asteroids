@@ -1,52 +1,52 @@
-import HeartBrokenIcon from '@mui/icons-material/HeartBroken'
-import React, { useState, useEffect, useMemo } from 'react'
-import ErrorIcon from '@mui/icons-material/Error'
-import styled from 'styled-components'
-import { getISOWeek } from 'date-fns'
-import Loading from 'react-loading'
-import Module from './Module'
-import api from '../api'
+import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
+import React, { useState, useEffect, useMemo } from "react";
+import ErrorIcon from "@mui/icons-material/Error";
+import styled from "styled-components";
+import { getISOWeek } from "date-fns";
+import Loading from "react-loading";
+import Module from "./Module";
+import api from "../api";
 
-const WEEK_COLUMNS = 5
-const WEEK_ROWS = 4
+const WEEK_COLUMNS = 5;
+const WEEK_ROWS = 4;
 
 export default function LandingPage() {
-  const [currentWeek] = useState(getISOWeek(new Date()))
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek)
-  const [asteroids, setAsteroids] = useState()
-  const [error, setError] = useState()
+  const [currentWeek] = useState(getISOWeek(new Date()));
+  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
+  const [asteroids, setAsteroids] = useState();
+  const [error, setError] = useState();
 
   const weeks = useMemo(() => {
-    const weeks = []
+    const weeks = [];
     for (let i = 0; i < WEEK_COLUMNS * WEEK_ROWS; i++) {
       if (currentWeek - i >= 1) {
-        weeks.unshift(currentWeek - i)
+        weeks.unshift(currentWeek - i);
       } else {
         // I would have handled weeks around the year change
         // better here.
-        break
+        break;
       }
     }
-    return weeks
-  }, [currentWeek])
+    return weeks;
+  }, [currentWeek]);
 
   useEffect(() => {
-    if (error) return
-    let cancelled = false
-    setAsteroids(null)
+    if (error) return;
+    let cancelled = false;
+    setAsteroids(null);
     api.getAsteroidsInWeek(selectedWeek).then(
       ({ data }) => {
-        if (cancelled) return
-        setAsteroids(data)
+        if (cancelled) return;
+        setAsteroids(data);
       },
       (error) => {
-        setError(error.message)
-      },
-    )
+        setError(error.message);
+      }
+    );
     return () => {
-      cancelled = true
-    }
-  }, [selectedWeek, error])
+      cancelled = true;
+    };
+  }, [selectedWeek, error]);
 
   return (
     <Container>
@@ -61,7 +61,7 @@ export default function LandingPage() {
               <Week
                 key={week}
                 onClick={() => {
-                  setSelectedWeek(week)
+                  setSelectedWeek(week);
                 }}
                 $active={selectedWeek === week}
               >
@@ -82,22 +82,20 @@ export default function LandingPage() {
           {asteroids?.map?.((asteroid) => (
             <Asteroid key={asteroid.id}>
               <div>
+                <AsteroidName>
+                  {asteroid.name}{" "}
+                  {asteroid.is_potentially_hazardous && (
+                    <ErrorIcon
+                      title="Potentially hazardous"
+                      style={{ color: "var(--red)" }}
+                    />
+                  )}
+                </AsteroidName>
                 <div>
-                  <strong>
-                    {asteroid.name}{' '}
-                    {asteroid.is_potentially_hazardous && (
-                      <ErrorIcon
-                        title="Potentially hazardous"
-                        style={{ color: 'var(--red)' }}
-                      />
-                    )}
-                  </strong>
-                </div>
-                <div>
-                  Nearest miss:{' '}
-                  {new Intl.NumberFormat('en-US').format(
-                    Math.round(asteroid.miss_distance_km),
-                  )}{' '}
+                  Nearest miss:{" "}
+                  {new Intl.NumberFormat("en-US").format(
+                    Math.round(asteroid.miss_distance_km)
+                  )}{" "}
                   km
                 </div>
               </div>
@@ -107,12 +105,12 @@ export default function LandingPage() {
         </Module>
       </Main>
     </Container>
-  )
+  );
 }
 
 const Container = styled.main`
   height: 100%;
-`
+`;
 
 const Main = styled.main`
   padding: 20px;
@@ -122,7 +120,12 @@ const Main = styled.main`
   gap: 10px;
   max-width: 900px;
   margin: 0 auto;
-`
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+`;
 
 const Header = styled.header`
   height: 100px;
@@ -140,36 +143,38 @@ const Header = styled.header`
   & > * {
     font-size: 50px;
   }
-`
+`;
 
 const Week = styled.button`
   border: none;
   font-weight: normal;
   cursor: pointer;
   aspect-ratio: 1 / 1;
-  background-color: ${(p) => (p.$active ? 'white' : '#aaa')};
+  background-color: ${(p) => (p.$active ? "white" : "#aaa")};
   color: var(--dark);
   border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 25px;
-`
+`;
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(${WEEK_COLUMNS}, 1fr);
   gap: 10px;
-`
+`;
 
 const StyledLoading = styled(Loading)`
   margin: 40px auto;
-`
+`;
 
 const Asteroid = styled.div`
+  align-items: center;
   margin-bottom: 10px;
   background-color: white;
-  padding: 5px;
+  border-radius: 5px;
+  padding: 10px;
   color: var(--dark);
   display: grid;
   grid-template-columns: 1fr auto;
@@ -188,12 +193,12 @@ const Asteroid = styled.div`
       background-color: var(--dark);
     }
   }
-`
+`;
 
 const ErrorMessage = styled.div`
   text-align: center;
   margin: 50px;
-`
+`;
 
 const Button = styled.button`
   border-radius: 5px;
@@ -211,4 +216,10 @@ const Button = styled.button`
   :hover:active {
     background-color: #aaa;
   }
-`
+`;
+
+const AsteroidName = styled.h3`
+  margin: 0;
+  font-size: 20px;
+  margin-bottom: 10px;
+`;
