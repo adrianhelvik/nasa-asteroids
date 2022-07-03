@@ -37,6 +37,7 @@ public class Asteroid {
     this.date = date;
     Double closestMiss = null;
     for (var approach : close_approach_data) {
+      if (!approach.close_approach_date.equals(this.date)) continue;
       double missDistance = Double.parseDouble(approach.miss_distance.kilometers);
       if (closestMiss == null || missDistance < closestMiss) {
         closestMiss = missDistance;

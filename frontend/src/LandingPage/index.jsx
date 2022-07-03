@@ -147,7 +147,13 @@ export default function LandingPage() {
               }
             >
               <div>
-                <AsteroidName>
+                <AsteroidName
+                  title={
+                    asteroid.is_potentially_hazardous_asteroid
+                      ? "Potentially hazardous"
+                      : null
+                  }
+                >
                   <span className="bx bx-meteor" /> {asteroid.name}{" "}
                 </AsteroidName>
                 <div>
@@ -162,7 +168,7 @@ export default function LandingPage() {
                   {fmtDiameter(asteroid.estimated_diameter)}
                 </div>
               </div>
-              <a href={`/asteroid/${asteroid.id}`}>
+              <a href={`/asteroid/${asteroid.id}?date="${asteroid.date}"`}>
                 <i className="bx bxs-info-circle"></i> Details
               </a>
             </Asteroid>
@@ -280,6 +286,7 @@ const Asteroid = styled.div`
 
   & .bx-meteor {
     font-size: 30px;
+    color: var(--dark-accent);
   }
 
   &.dangerous .bx-meteor {

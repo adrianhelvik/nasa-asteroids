@@ -112,7 +112,7 @@ public class NasaApi {
   public DetailedAsteroid requestOne(String id) throws Exception {
     var json = RequestCache.get(neoBaseUrl + "/" + param(id) + "?api_key=" + param(apiKey));
 
-    return new ObjectMapper().readValue(json, new TypeReference<>(){});
+    return new ObjectMapper().readValue(json, new TypeReference<DetailedAsteroid>(){});
   }
 
   private String param(String input) throws Exception {

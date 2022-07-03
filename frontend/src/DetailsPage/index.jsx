@@ -2,14 +2,16 @@ import HeartBrokenIcon from "@mui/icons-material/HeartBroken";
 import React, { useEffect, useState, useMemo } from "react";
 import WarningIcon from "@mui/icons-material/Warning";
 import CheckIcon from "@mui/icons-material/Check";
+import styled, { css } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import useSearchState from "../useSearchState";
 import { useParams } from "react-router-dom";
 import fmtDiameter from "../fmtDiameter";
-import styled from "styled-components";
 import Loading from "react-loading";
 import api from "../api";
 
 export default function DetailsPage() {
+  const [date, setDate] = useSearchState("date", null, { replace: true });
   const [asteroid, setAsteroid] = useState(null);
   const [error, setError] = useState();
   const navigate = useNavigate();
@@ -47,6 +49,15 @@ export default function DetailsPage() {
       cancelled = true;
     };
   }, [id, error]);
+
+  const encounter = useMemo(() => {
+    if (asteroid == null) return null;
+    return asteroid.close_approach_data.find(
+      (approach) => approach.close_approach_date === date
+    );
+  }, [asteroid, date]);
+
+  console.log(encounter);
 
   const view = useMemo(() => {
     if (error) return "error";
@@ -93,11 +104,11 @@ export default function DetailsPage() {
             <InfoBox>
               <InfoHeader>
                 <div className="bx bx-ruler" />
-                <div>Nearest miss</div>
+                <div>Miss distance</div>
               </InfoHeader>
               <InfoContent>
                 {new Intl.NumberFormat("en-US").format(
-                  Math.round(asteroid.miss_distance_km)
+                  Math.round(Number(encounter?.miss_distance.kilometers))
                 )}{" "}
                 km
               </InfoContent>
@@ -110,6 +121,28 @@ export default function DetailsPage() {
               <InfoContent>
                 {fmtDiameter(asteroid.estimated_diameter)}
               </InfoContent>
+            </InfoBox>
+            <InfoBox>
+              <InfoHeader>Orbit description</InfoHeader>
+              <InfoText>
+                {asteroid.orbital_data.orbit_class.orbit_class_description}
+              </InfoText>
+            </InfoBox>
+            <InfoBox>
+              <InfoHeader>Close encounters</InfoHeader>
+              <InfoText>
+                <ul>
+                  {asteroid.close_approach_data.map((approach, i) => (
+                    <DateItem
+                      key={i}
+                      $active={date === approach.close_approach_date}
+                      onClick={() => setDate(approach.close_approach_date)}
+                    >
+                      {approach.close_approach_date}
+                    </DateItem>
+                  ))}
+                </ul>
+              </InfoText>
             </InfoBox>
           </Grid>
         </Main>
@@ -148,7 +181,8 @@ const InfoHeader = styled.h3`
   }
 `;
 
-const InfoContent = styled.p`
+const InfoContent = styled.div`
+  text-align: center;
   margin: 0;
   font-size: 40px;
   padding: 20px;
@@ -159,6 +193,29 @@ const InfoContent = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+const InfoText = styled.div`
+  text-align: center;
+  margin: 0;
+  font-size: 20px;
+  padding: 20px;
+  background-color: white;
+  color: var(--dark);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 14px;
+  }
 `;
 
 const Main = styled.main`
@@ -317,4 +374,26 @@ const Button = styled.button`
   margin-top: 40px;
   border: none;
   cursor: pointer;
+`;
+
+const DateItem = styled.li`
+  padding: 3px;
+  border: 1px solid var(--dark);
+  border-radius: 5px;
+  cursor: pointer;
+
+  ${(p) =>
+    p.$active &&
+    css`
+      background-color: var(--dark-accent);
+      color: white;
+    `};
+
+  ${(p) =>
+    !p.$active &&
+    css`
+      :hover {
+        background-color: var(--accent);
+      }
+    `};
 `;

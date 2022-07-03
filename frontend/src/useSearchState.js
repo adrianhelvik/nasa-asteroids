@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCallback } from "react";
 
-export default function useSearchState(name, defaultValue) {
+export default function useSearchState(name, defaultValue, config = {}) {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const navigate = useNavigate();
   const value = params.get(name);
+
+  const configString = JSON.stringify(config)
 
   const setter = useCallback(
     (value) => {
@@ -13,9 +15,10 @@ export default function useSearchState(name, defaultValue) {
       if (typeof value === "function")
         value = value(JSON.parse(params.get(name)));
       params.set(name, JSON.stringify(value));
-      navigate("?" + params.toString());
+      const config = JSON.parse(configString)
+      navigate("?" + params.toString(), config);
     },
-    [name, navigate]
+    [name, navigate, configString]
   );
 
   let parsedValue;
