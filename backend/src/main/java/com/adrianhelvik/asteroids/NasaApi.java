@@ -1,12 +1,12 @@
 package com.adrianhelvik.asteroids;
 
-import org.springframework.web.server.ResponseStatusException;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.server.ResponseStatusException;
+import static com.adrianhelvik.asteroids.RedisSingleton.redis;
 import com.adrianhelvik.asteroids.models.*;
 import org.springframework.http.HttpStatus;
-import com.adrianhelvik.asteroids.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.regex.*;
 import java.util.Calendar;
@@ -109,13 +109,16 @@ public class NasaApi {
     return asteroids;
   }
 
-  public Asteroid requestOne(String id) throws Exception {
-    // TODO: Return neo-request data for the details page
-    return null;
+  public DetailedAsteroid requestOne(String id) throws Exception {
+    var json = redis.get("asteroid:" + id);
+    if (json == null) {
+      return null;
+    }
+    return new ObjectMapper().readValue(json, new TypeReference<>(){});
   }
 
   private String param(String input) throws Exception {
-    return URLEncoder.encode(input, "UTF-8");
+    return URLEncoder.encode(input, StandardCharsets.UTF_8);
   }
 
   private boolean isValidDate(String date) {

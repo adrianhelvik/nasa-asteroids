@@ -143,10 +143,14 @@ public class AsteroidsApi {
     }
 
     @GetMapping("/v1/asteroids/{id}")
-    public ResponseEntity<String> getAsteroidById(@PathVariable("id") String id) {
-        var json = redis.get("asteroid:" + id);
+    public ResponseEntity<String> getAsteroidById(@PathVariable("id") String id) throws Exception {
+        var asteroid = new NasaApi(apiKey).requestOne(id);
 
-        if (json == null) return ResponseEntity.status(404).body("Not found");
+        if (asteroid == null) {
+            return ResponseEntity.status(404).body("Not found");
+        }
+
+        var json = new ObjectMapper().writeValueAsString(asteroid);
 
         return ResponseEntity.status(200).body(json);
     }
